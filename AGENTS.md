@@ -8,6 +8,45 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## Project
+
+"OpenDayCare": a daycare communication app — staff post about kids, families follow along. The app is still create-next-app boilerplate; the product is built against the design mockups in `references/`.
+
+## Stack
+
+- Next.js 16 App Router (`app/`), React 19, TypeScript strict, Tailwind v4 (`@tailwindcss/postcss`), ESLint flat config
+- Path alias `@/*` → repo root
+- No test framework installed; verify with typecheck + lint + `next build`
+
+## Commands
+
+- `npm run dev` — dev server on http://localhost:3000
+- `npx tsc --noEmit` — typecheck (no script for this)
+- `npm run lint` — ESLint. It currently fails on `references/pantallas/support.js`, a vendored mockup helper, not app code — ignore `references/` errors.
+- `npm run build` / `npm start`
+
+## Design source of truth
+
+- `references/pantallas/*.dc.html` are the interactive UI mockups — open them in a browser (`references/pantallas/support.js` powers them). Match them exactly, including Argentine-Spanish (voseo) copy.
+- Design system: Fredoka headings + Nunito body; bg `#FBF4EC`, text `#3F362E`, primary gradient `#F4977E→#EE8164`, accent `#C5503A`.
+- Two roles with separate views: staff (`feed.dc.html`) and family (`familia-feed.dc.html`).
+- `references/screenshots/*.png` — rendered captures of the same mockups.
+
+## Workflow
+
+- Spec features with the `spec` skill, implement with `spec-impl` (`.agents/skills/`).
+- MCPs: Playwright screenshots and artifacts go in `.playwright-mcp/` (gitignored); use Context7 for current framework docs — Next 16 differs from most training data.
+
+## Gotchas
+
+- App code uses Next 16 typing e.g. `LayoutProps<"/">` in `app/layout.tsx` — check `node_modules/next/dist/docs/` before writing Next APIs.
+
 ## MCPs
 
 - Playwright: Screenshots y cualquier cosa relacionada a Playwirght tiene que estar enla carpeta .playwirght-mcp/
+- Context7: utilziaremos este MCP para traer información actualizada de algún framework.
+
+## Spec Driven Development - Skills
+
+- /spec utilizaremos esta habilidad para crear las especificaciones.
+- /spec-impl usaremos esta habilidad para hacer las implementaciones de las especificaciones.

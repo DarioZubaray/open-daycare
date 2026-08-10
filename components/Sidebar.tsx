@@ -60,11 +60,11 @@ function LogoutIcon() {
   );
 }
 
-const NAV_ITEMS: Array<{ label: string; icon: ReactNode; active?: boolean }> = [
-  { label: "Feed", icon: <HomeIcon />, active: true },
-  { label: "Niños", icon: <ChildrenIcon /> },
-  { label: "Avisos", icon: <BellIcon /> },
-  { label: "Mi cuenta", icon: <UserIcon /> },
+const NAV_ITEMS: Array<{ label: string; icon: ReactNode; href: string; active?: boolean }> = [
+  { label: "Feed", icon: <HomeIcon />, href: "#", active: true },
+  { label: "Niños", icon: <ChildrenIcon />, href: "/kids" },
+  { label: "Avisos", icon: <BellIcon />, href: "#" },
+  { label: "Mi cuenta", icon: <UserIcon />, href: "#" },
 ];
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -104,7 +104,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           {NAV_ITEMS.map((item) => (
             <a
               key={item.label}
-              href="#"
+              href={item.href}
               className={`flex items-center gap-3 rounded-xl px-3 py-[11px] text-[14.5px] ${
                 item.active
                   ? "bg-[#FBE3D8] font-extrabold text-[#D9583C]"

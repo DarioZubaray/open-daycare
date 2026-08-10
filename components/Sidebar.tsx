@@ -1,4 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function SunIcon() {
   return (
@@ -61,13 +65,15 @@ function LogoutIcon() {
 }
 
 const NAV_ITEMS: Array<{ label: string; icon: ReactNode; href: string; active?: boolean }> = [
-  { label: "Feed", icon: <HomeIcon />, href: "#", active: true },
+  { label: "Feed", icon: <HomeIcon />, href: "/" },
   { label: "Niños", icon: <ChildrenIcon />, href: "/kids" },
   { label: "Avisos", icon: <BellIcon />, href: "#" },
   { label: "Mi cuenta", icon: <UserIcon />, href: "#" },
 ];
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const pathname = usePathname();
+
   return (
     <>
       {isOpen ? (
@@ -82,7 +88,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <a href="#" className="flex items-center gap-[11px] px-2 pb-[22px] pt-1">
+        <Link href="/" className="flex items-center gap-[11px] px-2 pb-[22px] pt-1">
           <div className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-xl bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
             <SunIcon />
           </div>
@@ -90,7 +96,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             <div className="font-heading text-[17px] font-semibold leading-none text-ink">OpenDayCare</div>
             <div className="mt-0.5 text-[11.5px] text-muted">Sala Soles</div>
           </div>
-        </a>
+        </Link>
 
         <a
           href="#"
@@ -101,20 +107,26 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         </a>
 
         <nav className="flex flex-1 flex-col gap-1">
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-[11px] text-[14.5px] ${
-                item.active
-                  ? "bg-[#FBE3D8] font-extrabold text-[#D9583C]"
-                  : "font-semibold text-[#6E6359]"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </a>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.href !== "#" && pathname === item.href;
+            const className = `flex items-center gap-3 rounded-xl px-3 py-[11px] text-[14.5px] ${
+              isActive
+                ? "bg-[#FBE3D8] font-extrabold text-[#D9583C]"
+                : "font-semibold text-[#6E6359]"
+            }`;
+
+            return item.href === "#" ? (
+              <a key={item.label} href="#" className={className}>
+                {item.icon}
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.label} href={item.href} className={className}>
+                {item.icon}
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="mt-2.5 border-t border-line pt-3.5">

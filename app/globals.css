@@ -20,3 +20,14 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body);
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e4d6c4;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}

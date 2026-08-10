@@ -1,6 +1,6 @@
 # SPEC 02 — Pantallas Niños y Perfil de niño
 
-> **State:** Aprobado
+> **State:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-10
 > **Objective:** Implementar las pantallas de listado de niños (`/kids`) y perfil de niño (`/kids/[id]`) a partir de los mockups `ninos.dc.html` y `perfil-nino.dc.html`, con datos mock estáticos, componente reutilizable `ChildCard`, y navegación funcional entre ambas páginas y de vuelta al home.
@@ -78,21 +78,21 @@ export const children: Child[] = [ /* los 8 niños del mockup */ ];
 
 ## Acceptance criteria
 
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
-- [ ] `npm run build` compila.
-- [ ] `/kids` muestra header "GESTIÓN / Niños", barra de búsqueda, divider "SALA SOLES · 8 niños", grid 2 columnas con las 8 tarjetas.
-- [ ] Cada `ChildCard` muestra avatar circular con inicial, nombre Fredoka, edad y padres vinculados.
-- [ ] Tarjetas con badge (MANÍ, LACTOSA) muestran el badge con color de fondo y texto del mockup.
-- [ ] Tarjeta de Valentina (sin padres) muestra badge VINCULAR en rosa.
-- [ ] Tarjetas sin badge y con al menos 1 padre muestran chevron a la derecha.
-- [ ] Click en cualquier tarjeta navega a `/kids/{id}`.
-- [ ] `/kids/mateo-fernandez` muestra perfil completo: avatar 84px, nombre, edad, sala, notas de alergia, fecha de nacimiento, sala, ingreso, 2 padres (Lucía ACTIVA, Diego PENDIENTE).
-- [ ] "Volver a Niños" en el perfil navega de regreso a `/kids`.
-- [ ] "Resumen del día", "Editar", "Vincular otro padre" y "Agregar niño" usan `href="#"`.
-- [ ] Sidebar muestra enlace Niños apuntando a `/kids`; otros enlaces siguen con `href="#"`.
-- [ ] Layout coincide visualmente con los mockups de `references/screenshots/`.
-- [ ] Todos los identificadores internos en inglés; español solo en copy de UI.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
+- [x] `npm run build` compila.
+- [x] `/kids` muestra header "GESTIÓN / Niños", barra de búsqueda, divider "SALA SOLES · 8 niños", grid 2 columnas con las 8 tarjetas.
+- [x] Cada `ChildCard` muestra avatar circular con inicial, nombre Fredoka, edad y padres vinculados.
+- [x] Tarjetas con badge (MANÍ, LACTOSA) muestran el badge con color de fondo y texto del mockup.
+- [x] Tarjeta de Valentina (sin padres) muestra badge VINCULAR en rosa.
+- [x] Tarjetas sin badge y con al menos 1 padre muestran chevron a la derecha.
+- [x] Click en cualquier tarjeta navega a `/kids/{id}`.
+- [x] `/kids/mateo-fernandez` muestra perfil completo: avatar 84px, nombre, edad, sala, notas de alergia, fecha de nacimiento, sala, ingreso, 2 padres (Lucía ACTIVA, Diego PENDIENTE).
+- [x] "Volver a Niños" en el perfil navega de regreso a `/kids`.
+- [x] "Resumen del día", "Editar", "Vincular otro padre" y "Agregar niño" usan `href="#"`.
+- [x] Sidebar muestra enlace Niños apuntando a `/kids`; otros enlaces siguen con `href="#"`.
+- [x] Layout coincide visualmente con los mockups de `references/screenshots/`.
+- [x] Todos los identificadores internos en inglés; español solo en copy de UI.
 
 ## Decisions taken and discarded
 

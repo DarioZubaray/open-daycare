@@ -6,12 +6,11 @@ import { Sidebar } from "@/components/Sidebar";
 import { feedPosts } from "@/lib/posts";
 
 function formatToday(): string {
-  return new Intl.DateTimeFormat("es-AR", {
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-    timeZone: "America/Argentina/Buenos_Aires",
-  }).format(new Date());
+  const timeZone = "America/Argentina/Buenos_Aires";
+  const date = new Date();
+  const weekday = new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone }).format(date);
+  const dayMonth = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone }).format(date);
+  return `${weekday} ${dayMonth}`;
 }
 
 function CameraIcon() {

@@ -1,6 +1,6 @@
 # SPEC 01 — Feed como home (`/`)
 
-**State:** Aprobado
+**State:** Implementado
 **Depends on:** —
 **Date:** 2026-08-09
 **Objective:** Implementar el feed de staff del mockup `references/pantallas/feed.dc.html` como home (`/`) del proyecto con estilado idéntico al proporcionado, contenido estático, fecha dinámica en español y toggle móvil, sin autenticación ni persistencia.
@@ -76,17 +76,17 @@ export const feedPosts: Post[] = [ /* the 3 mockup posts */ ];
 
 ## Acceptance criteria
 
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
-- [ ] `npm run build` compila.
-- [ ] `/` muestra sidebar 248px sticky + main centrado (760px), fondo `#F6ECDF`, tarjetas `#FFFDF9` borde `#ECE0D0` radio 20px.
-- [ ] Sidebar con logo, botón gradiente "Nueva publicación", nav con Feed activo (`#FBE3D8`) y footer de Caro con logout.
-- [ ] Header: "GUARDERÍA · SALA SOLES", "Buenas, Caro", "12 niños · {fecha de hoy es-AR}".
-- [ ] Los 3 posts con badges LOGRO/ACTIVIDAD/ANUNCIO en sus colores, audiences, textos, contadores (3/1, 5/2, 8/0) y placeholder "Foto · pintando con témperas".
-- [ ] Bajo 900px aparece hamburguesa que abre/cierra la sidebar; sobre 900px no hay hamburguesa.
-- [ ] No hay string literals en español en el código: todos los identificadores internos y literales están en inglés; el español queda solo en el copy de UI (badges, audiences, cuerpos, textos del mockup).
-- [ ] Todos los enlaces sin destino usan `href="#"` y no rompen.
-- [ ] Layout coincide visualmente con `references/screenshots/feed.png`.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
+- [x] `npm run build` compila.
+- [x] `/` muestra sidebar 248px sticky + main centrado (760px), fondo `#F6ECDF`, tarjetas `#FFFDF9` borde `#ECE0D0` radio 20px.
+- [x] Sidebar con logo, botón gradiente "Nueva publicación", nav con Feed activo (`#FBE3D8`) y footer de Caro con logout.
+- [x] Header: "GUARDERÍA · SALA SOLES", "Buenas, Caro", "12 niños · {fecha de hoy es-AR}".
+- [x] Los 3 posts con badges LOGRO/ACTIVIDAD/ANUNCIO en sus colores, audiences, textos, contadores (3/1, 5/2, 8/0) y placeholder "Foto · pintando con témperas".
+- [x] Bajo 900px aparece hamburguesa que abre/cierra la sidebar; sobre 900px no hay hamburguesa.
+- [x] No hay string literals en español en el código: todos los identificadores internos y literales están en inglés; el español queda solo en el copy de UI (badges, audiences, cuerpos, textos del mockup).
+- [x] Todos los enlaces sin destino usan `href="#"` y no rompen.
+- [x] Layout coincide visualmente con `references/screenshots/feed.png`.
 
 ## Decisions taken and discarded
 

@@ -129,8 +129,14 @@ export default function ActivateAccountPage() {
 
           {/* Photo authorization checkbox */}
           <label className="mb-6 flex cursor-pointer items-start gap-[12px] rounded-[14px] bg-[#FBF1D6] p-[14px_16px]">
-            <span className="mt-px flex h-[24px] w-[24px] flex-none items-center justify-center rounded-[8px] bg-[#5FB97E]">
-              <CheckIcon />
+            <input
+              type="checkbox"
+              checked={authorizePhotos}
+              onChange={(e) => setAuthorizePhotos(e.target.checked)}
+              className="sr-only"
+            />
+            <span className={`mt-px flex h-[24px] w-[24px] flex-none items-center justify-center rounded-[8px] ${authorizePhotos ? "bg-[#5FB97E]" : "bg-[#5FB97E]/60"}`}>
+              {authorizePhotos && <CheckIcon />}
             </span>
             <span className="text-[14px] leading-[1.45] text-[#8A7234]">
               Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro de la app.

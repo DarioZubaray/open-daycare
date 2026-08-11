@@ -88,25 +88,25 @@ interface AddChildFormState {
 
 ## Acceptance criteria
 
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
-- [ ] `npm run build` compila.
-- [ ] Click en "Agregar niño" abre el modal.
-- [ ] Modal muestra header con "Cancelar", "Agregar niño", "Guardar" idéntico al mockup.
-- [ ] Campo nombre completo: label "NOMBRE COMPLETO", placeholder "Ej. Martina López", obligatorio.
-- [ ] Campo fecha de nacimiento: label "FECHA DE NACIMIENTO", placeholder "dd/mm/aaaa", máscara autoinserta `/`.
-- [ ] Campo sala: label "SALA", dropdown con opciones Soles, Lunas, Estrellas, valor por defecto "Soles".
-- [ ] Campo alergias: label "ALERGIAS (ETIQUETAS)", placeholder "Ej. Maní, Lactosa", al presionar coma crea tag visual.
-- [ ] Tags de alergias se muestran como pills con botón `×` para eliminar.
-- [ ] Campo notas médicas: label "NOTAS MÉDICAS", placeholder "Indicaciones, medicación, contactos…", textarea.
-- [ ] Al guardar con nombre vacío: se muestra error inline "El nombre es obligatorio".
-- [ ] Al guardar con fecha inválida: se muestra error inline "Fecha inválida".
-- [ ] Al guardar con datos válidos: `console.log` con los datos del formulario.
-- [ ] Al guardar con datos válidos: el niño nuevo aparece en la grilla con nombre, edad calculada, sala, y alergias.
-- [ ] Al guardar con datos válidos: el modal se cierra.
-- [ ] Al cancelar: el modal se cierra sin guardar.
-- [ ] Estilos del modal coinciden visualmente con `agregar-nino.dc.html` (fondo `#FBF4EC`, bordes `#EADFD0`, radio 14px, sombra, tipografías Fredoka/Nunito).
-- [ ] Todos los identificadores internos en inglés; español solo en copy de UI.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
+- [x] `npm run build` compila.
+- [x] Click en "Agregar niño" abre el modal.
+- [x] Modal muestra header con "Cancelar", "Agregar niño", "Guardar" idéntico al mockup.
+- [x] Campo nombre completo: label "NOMBRE COMPLETO", placeholder "Ej. Martina López", obligatorio.
+- [x] Campo fecha de nacimiento: label "FECHA DE NACIMIENTO", placeholder "dd/mm/aaaa", máscara autoinserta `/`.
+- [x] Campo sala: label "SALA", dropdown con opciones Soles, Lunas, Estrellas, valor por defecto "Soles".
+- [x] Campo alergias: label "ALERGIAS (ETIQUETAS)", placeholder "Ej. Maní, Lactosa", al presionar coma crea tag visual.
+- [x] Tags de alergias se muestran como pills con botón `×` para eliminar.
+- [x] Campo notas médicas: label "NOTAS MÉDICAS", placeholder "Indicaciones, medicación, contactos…", textarea.
+- [x] Al guardar con nombre vacío: se muestra error inline "El nombre es obligatorio".
+- [x] Al guardar con fecha inválida: se muestra error inline "Fecha inválida".
+- [x] Al guardar con datos válidos: `console.log` con los datos del formulario.
+- [x] Al guardar con datos válidos: el niño nuevo aparece en la grilla con nombre, edad calculada, sala, y alergias.
+- [x] Al guardar con datos válidos: el modal se cierra.
+- [x] Al cancelar: el modal se cierra sin guardar.
+- [x] Estilos del modal coinciden visualmente con `agregar-nino.dc.html` (fondo `#FBF4EC`, bordes `#EADFD0`, radio 14px, sombra, tipografías Fredoka/Nunito).
+- [x] Todos los identificadores internos en inglés; español solo en copy de UI.
 
 ## Decisions taken and discarded
 

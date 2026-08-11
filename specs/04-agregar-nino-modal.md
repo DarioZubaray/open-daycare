@@ -1,6 +1,6 @@
 # SPEC 04 — Modal Agregar Niño
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 02
 > **Date:** 2026-08-11
 > **Objective:** Implementar el modal de agregar niño en `/kids`, con formulario de validación y máscara de fecha, que se abre al presionar el botón "Agregar niño" y agrega el niño a la grilla en memoria.

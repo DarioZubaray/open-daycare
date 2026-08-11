@@ -138,9 +138,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               <div className="text-sm font-extrabold text-ink">Caro Giménez</div>
               <div className="text-xs text-muted">Maestra · Soles</div>
             </div>
-            <a href="#" title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
+            <Link href="/auth/login" title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
               <LogoutIcon />
-            </a>
+            </Link>
           </div>
         </div>
       </aside>

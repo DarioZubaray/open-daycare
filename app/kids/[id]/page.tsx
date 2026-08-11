@@ -49,8 +49,8 @@ export default async function KidProfilePage({
   }
 
   return (
-    <div className="flex min-h-screen bg-cream">
-      <main className="mx-auto h-screen min-w-0 w-full max-w-[820px] overflow-y-auto px-10 pb-20 pt-[34px]">
+    <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+      <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
         <Link
           href="/kids"
           className="mb-5 flex items-center gap-[7px] text-subtle font-bold text-[14px]"
@@ -171,7 +171,7 @@ export default async function KidProfilePage({
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

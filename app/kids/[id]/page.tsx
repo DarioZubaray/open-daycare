@@ -1,6 +1,16 @@
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useState } from "react";
 import { children } from "@/lib/children";
+import type { LinkedParent } from "@/lib/children";
+import { LinkParentModal } from "@/components/LinkParentModal";
+
+const ROLE_LABELS: Record<string, string> = {
+  mother: "Mamá",
+  father: "Papá",
+  guardian: "Tutor/a",
+};
 
 function ArrowLeftIcon() {
   return (
@@ -36,16 +46,54 @@ function PlusIcon() {
   );
 }
 
-export default async function KidProfilePage({
+export default function KidProfilePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const child = children.find((c) => c.id === id);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [parentsList, setParentsList] = useState<LinkedParent[]>([]);
+
+  // Resolve params synchronously — Next.js client components receive the resolved value
+  const [resolvedParams, setResolvedParams] = useState<{
+    id: string;
+  } | null>(null);
+
+  // Use a one-time effect to resolve params
+  useState(() => {
+    params.then((p) => setResolvedParams(p));
+  });
+
+  const child = resolvedParams
+    ? children.find((c) => c.id === resolvedParams.id)
+    : null;
+
+  // Initialize parentsList when child is found
+  const [initialized, setInitialized] = useState(false);
+  if (child && !initialized) {
+    setParentsList(child.parents);
+    setInitialized(true);
+  }
+
+  function handleAddParent(parent: LinkedParent) {
+    setParentsList((prev) => [...prev, parent]);
+  }
 
   if (!child) {
-    notFound();
+    return (
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
+          <Link
+            href="/kids"
+            className="mb-5 flex items-center gap-[7px] text-subtle font-bold text-[14px]"
+          >
+            <ArrowLeftIcon />
+            Volver a Niños
+          </Link>
+          <p className="text-[15px] text-subtle">Niño no encontrado.</p>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -130,7 +178,7 @@ export default async function KidProfilePage({
                 PADRES VINCULADOS
               </div>
               <div className="flex flex-col gap-[14px]">
-                {child.parents.map((parent) => (
+                {parentsList.map((parent) => (
                   <div key={parent.name} className="flex items-center gap-3">
                     <div
                       className="flex h-10 w-10 flex-none items-center justify-center rounded-full font-heading text-base font-semibold text-white"
@@ -143,7 +191,7 @@ export default async function KidProfilePage({
                         {parent.name}
                       </div>
                       <div className="text-[12.5px] text-muted">
-                        {parent.role} ·{" "}
+                        {ROLE_LABELS[parent.role] ?? parent.role} ·{" "}
                         {parent.status === "active" ? "activa" : "invitación enviada"}
                       </div>
                     </div>
@@ -159,19 +207,29 @@ export default async function KidProfilePage({
                   </div>
                 ))}
 
-                <a href="#" className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center gap-3 pt-2"
+                >
                   <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
                     <PlusIcon />
                   </span>
                   <span className="text-[14.5px] font-extrabold text-accent">
                     Vincular otro padre
                   </span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <LinkParentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        childName={child.name}
+        onAddParent={handleAddParent}
+      />
     </main>
   );
 }

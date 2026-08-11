@@ -108,7 +108,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => {
-            const isActive = item.href !== "#" && pathname === item.href;
+            const isActive = item.href !== "#" && (pathname === item.href || pathname.startsWith(item.href + "/"));
             const className = `flex items-center gap-3 rounded-xl px-3 py-[11px] text-[14.5px] ${
               isActive
                 ? "bg-[#FBE3D8] font-extrabold text-[#D9583C]"

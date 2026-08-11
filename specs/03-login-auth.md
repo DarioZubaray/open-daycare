@@ -74,27 +74,27 @@ Validation rules:
 
 ## Acceptance criteria
 
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
-- [ ] `npm run build` compila.
-- [ ] `/auth/login` muestra layout split idéntico al mockup: panel izquierdo gradiente con logo, heading, subheading, "Guardería Sala Soles"; panel derecho con formulario.
-- [ ] Login NO muestra botones de rol ("Personal" / "Familia").
-- [ ] Login muestra campos email y password con estilos del mockup (bordes `#EADFD0`, radio 14px, fondo blanco).
-- [ ] "¿Olvidaste tu contraseña?" aparece alineado a la derecha en color `#C5503A`, `href="#"`.
-- [ ] "Iniciar sesión" es un botón con gradiente `#F4977E→#EE8164`, sombra, texto blanco, navega a `/` al hacer click si la validación pasa.
-- [ ] "Activá tu cuenta" es un link en `#C5503A` que navega a `/auth/activar-cuenta`.
-- [ ] Si el email es inválido (sin @ o dominio), se muestra error inline debajo del campo.
-- [ ] Si la contraseña tiene menos de 6 caracteres, se muestra error inline debajo del campo.
-- [ ] `/auth/activar-cuenta` muestra layout centrado idéntico al mockup: logo, heading, subheading, tarjeta de invitación (avatar "M", "Mateo · Sala Soles").
-- [ ] Activate-account muestra campos código de invitación (letter-spacing 3px, Fredoka), email, crear contraseña, con estilos del mockup.
-- [ ] Checkbox de autorización fotográfica con fondo `#FBF1D6` y check verde `#5FB97E`.
-- [ ] "Activar mi cuenta" navega a `/` si la validación pasa.
-- [ ] "¿Ya tenés cuenta? Iniciar sesión" navega a `/auth/login`.
-- [ ] Si el código de invitación está vacío, se muestra error inline.
-- [ ] Sidebar "Cerrar sesión" navega a `/auth/login`.
-- [ ] Ambas páginas NO muestran sidebar.
-- [ ] Navegación completa funciona: `/` → `/auth/login` → `/auth/activar-cuenta` → `/auth/login` → `/`.
-- [ ] Todos los identificadores internos en inglés; español solo en copy de UI.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `components/` (se ignoran los de `references/`).
+- [x] `npm run build` compila.
+- [x] `/auth/login` muestra layout split idéntico al mockup: panel izquierdo gradiente con logo, heading, subheading, "Guardería Sala Soles"; panel derecho con formulario.
+- [x] Login NO muestra botones de rol ("Personal" / "Familia").
+- [x] Login muestra campos email y password con estilos del mockup (bordes `#EADFD0`, radio 14px, fondo blanco).
+- [x] "¿Olvidaste tu contraseña?" aparece alineado a la derecha en color `#C5503A`, `href="#"`.
+- [x] "Iniciar sesión" es un botón con gradiente `#F4977E→#EE8164`, sombra, texto blanco, navega a `/` al hacer click si la validación pasa.
+- [x] "Activá tu cuenta" es un link en `#C5503A` que navega a `/auth/activar-cuenta`.
+- [x] Si el email es inválido (sin @ o dominio), se muestra error inline debajo del campo.
+- [x] Si la contraseña tiene menos de 6 caracteres, se muestra error inline debajo del campo.
+- [x] `/auth/activar-cuenta` muestra layout centrado idéntico al mockup: logo, heading, subheading, tarjeta de invitación (avatar "M", "Mateo · Sala Soles").
+- [x] Activate-account muestra campos código de invitación (letter-spacing 3px, Fredoka), email, crear contraseña, con estilos del mockup.
+- [x] Checkbox de autorización fotográfica con fondo `#FBF1D6` y check verde `#5FB97E`.
+- [x] "Activar mi cuenta" navega a `/` si la validación pasa.
+- [x] "¿Ya tenés cuenta? Iniciar sesión" navega a `/auth/login`.
+- [x] Si el código de invitación está vacío, se muestra error inline.
+- [x] Sidebar "Cerrar sesión" navega a `/auth/login`.
+- [x] Ambas páginas NO muestran sidebar.
+- [x] Navegación completa funciona: `/` → `/auth/login` → `/auth/activar-cuenta` → `/auth/login` → `/`.
+- [x] Todos los identificadores internos en inglés; español solo en copy de UI.
 
 ## Decisions taken and discarded
 

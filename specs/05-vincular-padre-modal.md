@@ -1,6 +1,6 @@
 # SPEC 05 — Modal Vincular Padre
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 02, SPEC 04
 > **Date:** 2026-08-11
 > **Objective:** Implementar el modal de "Vincular padre" en `/kids/[id]`, con formulario de validación (nombre, email, parentesco) y código de invitación auto-generado, que se abre al presionar "Vincular otro padre" y agrega el padre al array en memoria con estado pending.

@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import { ChildCard } from "@/components/ChildCard";
+import { AddChildModal } from "@/components/AddChildModal";
 import { children } from "@/lib/children";
+import type { Child } from "@/lib/children";
 
 function PlusIcon() {
   return (
@@ -19,6 +24,13 @@ function SearchIcon() {
 }
 
 export default function KidsPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [kidsList, setKidsList] = useState<Child[]>(children);
+
+  const handleAddChild = (child: Child) => {
+    setKidsList((prev) => [...prev, child]);
+  };
+
   return (
     <main className="h-screen min-w-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-[880px] px-10 pb-20 pt-[34px]">
@@ -31,13 +43,13 @@ export default function KidsPage() {
               Niños
             </h1>
           </div>
-          <a
-            href="#"
+          <button
+            onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 rounded-[14px] bg-linear-to-b from-primary-from to-primary-to px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)]"
           >
             <PlusIcon />
             Agregar niño
-          </a>
+          </button>
         </div>
 
         <div className="mb-[22px] flex items-center gap-[11px] rounded-[14px] border border-line bg-surface px-4 py-3">
@@ -52,16 +64,22 @@ export default function KidsPage() {
           <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-ink">
             SALA SOLES
           </span>
-          <span className="text-[13px] text-muted">{children.length} niños</span>
+          <span className="text-[13px] text-muted">{kidsList.length} niños</span>
           <span className="h-px flex-1 bg-[#E7DAC8]" />
         </div>
 
         <div className="grid grid-cols-2 gap-[14px]">
-          {children.map((child) => (
+          {kidsList.map((child) => (
             <ChildCard key={child.id} child={child} />
           ))}
         </div>
       </div>
+
+      <AddChildModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddChild={handleAddChild}
+      />
     </main>
   );
 }

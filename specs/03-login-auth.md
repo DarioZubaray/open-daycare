@@ -1,6 +1,6 @@
 # SPEC 03 — Pantallas de autenticación (Login + Activar cuenta)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-11
 > **Objective:** Implementar las pantallas de login (`/auth/login`) y activar cuenta (`/auth/activar-cuenta`) a partir de los mockups `login.dc.html` y `activar-cuenta.dc.html`, con formularios funcionales con validación, navegación entre ambas y hacia el home, sin sidebar, sin persistencia ni estado de sesión.

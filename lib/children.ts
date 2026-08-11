@@ -26,6 +26,7 @@ export interface Child {
   birthDate: string;
   joinDate: string;
   allergyNotes?: string;
+  allergies: string[];
 }
 
 export const children: Child[] = [
@@ -45,6 +46,7 @@ export const children: Child[] = [
     birthDate: "12 mar 2022",
     joinDate: "feb 2025",
     allergyNotes: "Alergia al maní. Evitar frutos secos. Lleva inhalador en la mochila.",
+    allergies: ["Maní"],
   },
   {
     id: "sofia-mendez",
@@ -59,6 +61,7 @@ export const children: Child[] = [
     ],
     birthDate: "15 jun 2023",
     joinDate: "mar 2025",
+    allergies: [],
   },
   {
     id: "benjamin-ruiz",
@@ -74,6 +77,7 @@ export const children: Child[] = [
     ],
     birthDate: "3 ene 2022",
     joinDate: "ene 2025",
+    allergies: [],
   },
   {
     id: "valentina-soto",
@@ -87,6 +91,7 @@ export const children: Child[] = [
     parents: [],
     birthDate: "20 abr 2023",
     joinDate: "abr 2025",
+    allergies: [],
   },
   {
     id: "tomas-diaz",
@@ -102,6 +107,7 @@ export const children: Child[] = [
     ],
     birthDate: "8 sep 2022",
     joinDate: "sep 2025",
+    allergies: ["Lactosa"],
   },
   {
     id: "emma-castro",
@@ -116,6 +122,7 @@ export const children: Child[] = [
     ],
     birthDate: "1 nov 2023",
     joinDate: "nov 2025",
+    allergies: [],
   },
   {
     id: "lucas-romero",
@@ -130,6 +137,7 @@ export const children: Child[] = [
     ],
     birthDate: "22 feb 2022",
     joinDate: "feb 2025",
+    allergies: [],
   },
   {
     id: "olivia-vega",
@@ -144,5 +152,6 @@ export const children: Child[] = [
     ],
     birthDate: "5 jul 2023",
     joinDate: "jul 2025",
+    allergies: [],
   },
 ];

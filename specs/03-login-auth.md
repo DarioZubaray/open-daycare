@@ -20,7 +20,7 @@
 **Out of scope (for future specs):**
 
 - Autenticación real, JWT, sesiones, backend, API, base de datos.
-- Persistencia de任何形式 (localStorage, cookies, etc.).
+- Persistencia de ningún tipo (localStorage, cookies, etc.).
 - Selección de rol (Personal / Familia).
 - Recuperación de contraseña ("¿Olvidaste tu contraseña?").
 - Feed familia (`familia-feed.dc.html`).
@@ -103,7 +103,7 @@ Validation rules:
 - **Tomada:** formularios con estado local (`useState`) y validación inline — suficiente sin backend; la validación se puede reutilizar cuando exista API.
 - **Tomada:** quitar botones de rol — el usuario confirmó que están fuera de alcance.
 - **Tomada:** "Cerrar sesión" en sidebar apunta a `/auth/login` — solo navega, sin limpiar estado (ya no hay estado).
-- **Tomada:**死 links para "¿Olvidaste tu contraseña?" — el usuario confirmó que por ahora son dead links.
+- **Tomada:** dead links para "¿Olvidaste tu contraseña?" — el usuario confirmó que por ahora son dead links.
 - **Descartada:** persistencia de sesión (localStorage, cookies) — sin backend no tiene sentido.
 - **Descartada:** selección de rol (Personal / Familia) — fuera de alcance explícito.
 - **Descartada:** feed familia (`familia-feed.dc.html`) — spec separado.
@@ -119,7 +119,7 @@ Validation rules:
 ## What is **not** in this spec
 
 - Autenticación real, JWT, sesiones, backend, API, base de datos.
-- Persistencia de任何形式.
+- Persistencia de ningún tipo.
 - Selección de rol (Personal / Familia).
 - Recuperación de contraseña.
 - Feed familia.

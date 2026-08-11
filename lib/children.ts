@@ -11,6 +11,7 @@ export type LinkedParent = {
   avatarBg: string;
   avatarColor: string;
   initial: string;
+  invitationCode?: string;
 };
 
 export interface Child {

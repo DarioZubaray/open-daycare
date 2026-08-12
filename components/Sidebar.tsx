@@ -71,7 +71,7 @@ const NAV_ITEMS: Array<{ label: string; icon: ReactNode; href: string; active?: 
   { label: "Mi cuenta", icon: <UserIcon />, href: "#" },
 ];
 
-export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export function Sidebar({ isOpen, onClose, onNewPost }: { isOpen: boolean; onClose: () => void; onNewPost?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -98,13 +98,13 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           </div>
         </Link>
 
-        <a
-          href="#"
+        <button
+          onClick={onNewPost}
           className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-linear-to-b from-primary-from to-primary-to px-3 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)]"
         >
           <PlusIcon />
           Nueva publicación
-        </a>
+        </button>
 
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => {

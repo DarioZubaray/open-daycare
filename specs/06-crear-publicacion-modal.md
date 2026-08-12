@@ -1,6 +1,6 @@
 # SPEC 06 — Modal Crear Publicación
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-12
 > **Objective:** Implementar el modal de "Nueva publicación" que se abre desde el botón "+ Nueva publicación" del Sidebar, con formulario de selección de niños, tipo, descripción y carga de fotos, que hace `console.log` con los datos al publicar.
@@ -81,21 +81,21 @@ interface CreatePostFormState {
 
 ## Acceptance criteria
 
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `components/`.
-- [ ] `npm run build` compila.
-- [ ] Click en "+ Nueva publicación" abre el modal.
-- [ ] Modal coincide visualmente con `crear-publicacion.dc.html`.
-- [ ] Chips de niños con avatar + nombre, selección múltiple funciona.
-- [ ] "Toda la sala" selecciona todos, individual deselecciona "Toda la sala".
-- [ ] Chips de tipos con colores fijos, selección múltiple funciona.
-- [ ] Botón "Publicar" deshabilitado cuando faltan condiciones.
-- [ ] Botón "Publicar" habilitado con 1 niño + 1 tipo + (descripción o foto).
-- [ ] Drag & drop de imágenes funciona.
-- [ ] Archivo no imagen muestra error visible.
-- [ ] Thumbnails de fotos subidas visibles.
-- [ ] `console.log` al publicar con datos válidos.
-- [ ] Modal se cierra y resetea al publicar o cancelar.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `components/`.
+- [x] `npm run build` compila.
+- [x] Click en "+ Nueva publicación" abre el modal.
+- [x] Modal coincide visualmente con `crear-publicacion.dc.html`.
+- [x] Chips de niños con avatar + nombre, selección múltiple funciona.
+- [x] "Toda la sala" selecciona todos, individual deselecciona "Toda la sala".
+- [x] Chips de tipos con colores fijos, selección múltiple funciona.
+- [x] Botón "Publicar" deshabilitado cuando faltan condiciones.
+- [x] Botón "Publicar" habilitado con 1 niño + 1 tipo + (descripción o foto).
+- [x] Drag & drop de imágenes funciona.
+- [x] Archivo no imagen muestra error visible.
+- [x] Thumbnails de fotos subidas visibles.
+- [x] `console.log` al publicar con datos válidos.
+- [x] Modal se cierra y resetea al publicar o cancelar.
 
 ## Decisions taken and discarded
 

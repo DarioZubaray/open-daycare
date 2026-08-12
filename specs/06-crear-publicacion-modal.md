@@ -1,6 +1,6 @@
 # SPEC 06 — Modal Crear Publicación
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-12
 > **Objective:** Implementar el modal de "Nueva publicación" que se abre desde el botón "+ Nueva publicación" del Sidebar, con formulario de selección de niños, tipo, descripción y carga de fotos, que hace `console.log` con los datos al publicar.

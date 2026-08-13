@@ -45,6 +45,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Playwright: Screenshots y cualquier cosa relacionada a Playwirght tiene que estar enla carpeta .playwirght-mcp/
 - Context7: utilziaremos este MCP para traer información actualizada de algún framework.
+- Supabase: integración activa para lectura/escritura de la base de datos en desarrollo y producción.
+
+## Supabase - Integración
+
+- Conectado vía MCP Server (lectura + escritura verificada)
+- **Tabla existente:** `daycares` (columns: id, name, address, created_at)
+- **Pruebas realizadas (12 ago 2026):** CREATE, INSERT, SELECT, DROP exitosos
 
 ## Spec Driven Development - Skills
 

@@ -16,24 +16,71 @@ export type Database = {
     Tables: {
       daycares: {
         Row: {
-          id: string
-          name: string
           address: string | null
           created_at: string
+          id: string
+          name: string
         }
         Insert: {
+          address?: string | null
+          created_at?: string
           id?: string
           name: string
-          address?: string | null
-          created_at?: string
         }
         Update: {
-          id?: string
-          name?: string
           address?: string | null
           created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          daily_summary_enabled: boolean
+          daycare_id: string | null
+          full_name: string
+          id: string
+          notify_on_post: boolean
+          role: Database["public"]["Enums"]["user_role"]
+          status: Database["public"]["Enums"]["user_status"]
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          daily_summary_enabled?: boolean
+          daycare_id?: string | null
+          full_name: string
+          id: string
+          notify_on_post?: boolean
+          role: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["user_status"]
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          daily_summary_enabled?: boolean
+          daycare_id?: string | null
+          full_name?: string
+          id?: string
+          notify_on_post?: boolean
+          role?: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["user_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_daycare_id_fkey"
+            columns: ["daycare_id"]
+            isOneToOne: false
+            referencedRelation: "daycares"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -43,7 +90,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "staff" | "parent" | "admin"
+      user_status: "pending" | "active"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -170,6 +218,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["staff", "parent", "admin"],
+      user_status: ["pending", "active"],
+    },
   },
 } as const

@@ -1,6 +1,6 @@
 # SPEC 09 — Autenticación real con Supabase Auth
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 03, SPEC 07, SPEC 08
 > **Date:** 2026-08-13
 > **Objective:** Implementar autenticación real (email + password) con Supabase Auth, proteger rutas con middleware de Next.js, y cerrar sesión correctamente.

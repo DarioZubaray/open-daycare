@@ -1,5 +1,4 @@
--- OpenDayCare: public schema
--- Declarative schema definition
+-- SPEC 08: Create users table, enums, RLS, and trigger
 
 -- ============================================
 -- ENUMS
@@ -9,18 +8,9 @@ create type user_role as enum ('staff', 'parent', 'admin');
 create type user_status as enum ('pending', 'active');
 
 -- ============================================
--- TABLES
+-- TABLE: users
 -- ============================================
 
--- daycares (SPEC 07)
-create table daycares (
-  id         uuid primary key default gen_random_uuid(),
-  name       text        not null,
-  address    text,
-  created_at timestamptz not null default now()
-);
-
--- users (SPEC 08)
 create table users (
   id                     uuid primary key references auth.users(id) on delete cascade,
   daycare_id             uuid references daycares(id),
@@ -39,15 +29,6 @@ create index idx_users_daycare_id on users(daycare_id);
 -- ============================================
 -- ROW LEVEL SECURITY
 -- ============================================
-
-alter table daycares enable row level security;
-
-create policy "Service role full access"
-  on daycares
-  for all
-  to service_role
-  using (true)
-  with check (true);
 
 alter table users enable row level security;
 
@@ -72,7 +53,7 @@ create policy "Users can update same daycare"
   with check (daycare_id = (select daycare_id from users where id = auth.uid()));
 
 -- ============================================
--- TRIGGERS
+-- TRIGGER: auto-create user on auth.users insert
 -- ============================================
 
 create or replace function public.handle_new_user()

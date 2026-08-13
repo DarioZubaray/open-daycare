@@ -1,6 +1,6 @@
 # SPEC 08 — Crear tabla users y enums (Supabase)
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 07
 > **Date:** 2026-08-13
 > **Objective:** Crear la tabla `users` con enums `user_role` y `user_status`, trigger auto-creat en `auth.users`, RLS para `service_role` y `authenticated`, y seed con 1 usuario staff para testing.

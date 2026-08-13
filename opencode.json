@@ -8,7 +8,7 @@
     }
   },
   "references": {
-    "docs": {
+    "db-schema": {
         "path": "../07-DB-Schema",
         "description": "Documentación de la base de datos, schemas, tablas, columnasa crear. Esto no implementado, es solo una referencia"
     }

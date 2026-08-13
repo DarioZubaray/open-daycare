@@ -53,6 +53,46 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **Tabla existente:** `daycares` (columns: id, name, address, created_at)
 - **Pruebas realizadas (12 ago 2026):** CREATE, INSERT, SELECT, DROP exitosos
 
+### Paquetes instalados
+
+- `@supabase/supabase-js` — cliente JS oficial de Supabase
+- `@supabase/ssr` — helpers para SSR en Next.js (cookies, middleware)
+
+### Archivos de utilidad (`utils/supabase/`)
+
+| Archivo | Uso |
+|---|---|
+| `server.ts` | `createClient(cookieStore)` — para Server Components y Route Handlers |
+| `client.ts` | `createClient()` — para Client Components (browser) |
+| `middleware.ts` | `createClient(request)` — refresca sesiones en middleware |
+
+### Variables de entorno (`.env.local`)
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+### Uso básico
+
+**Server Component:**
+```ts
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
+
+const cookieStore = await cookies()
+const supabase = createClient(cookieStore)
+const { data } = await supabase.from('table_name').select()
+```
+
+**Client Component:**
+```ts
+import { createClient } from '@/utils/supabase/client'
+
+const supabase = createClient()
+const { data } = await supabase.from('table_name').select()
+```
+
 ## Spec Driven Development - Skills
 
 - /spec utilizaremos esta habilidad para crear las especificaciones.

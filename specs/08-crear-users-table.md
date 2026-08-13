@@ -1,6 +1,6 @@
 # SPEC 08 — Crear tabla users y enums (Supabase)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 07
 > **Date:** 2026-08-13
 > **Objective:** Crear la tabla `users` con enums `user_role` y `user_status`, trigger auto-creat en `auth.users`, RLS para `service_role` y `authenticated`, y seed con 1 usuario staff para testing.
@@ -132,18 +132,18 @@ values (
 
 ## Acceptance criteria
 
-- [ ] `supabase/schemas/public.sql` define enums `user_role` y `user_status`.
-- [ ] `supabase/schemas/public.sql` define tabla `users` con todos los campos del schema.
-- [ ] Migración generada contiene `CREATE TYPE user_role`, `CREATE TYPE user_status`, `CREATE TABLE users`.
-- [ ] Migración contiene función `handle_new_user` y trigger `on_auth_user_created`.
-- [ ] RLS habilitado en `users`.
-- [ ] Policy `service_role` permite acceso total.
-- [ ] Policy `authenticated` filtra por `daycare_id`.
-- [ ] `supabase/seed.sql` inserta 1 usuario staff vinculado a "Guardería Sala Soles".
-- [ ] Tipos TypeScript generados incluyen tabla `users` y enums.
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/` y `lib/`.
-- [ ] `npm run build` compila.
+- [x] `supabase/schemas/public.sql` define enums `user_role` y `user_status`.
+- [x] `supabase/schemas/public.sql` define tabla `users` con todos los campos del schema.
+- [x] Migración generada contiene `CREATE TYPE user_role`, `CREATE TYPE user_status`, `CREATE TABLE users`.
+- [x] Migración contiene función `handle_new_user` y trigger `on_auth_user_created`.
+- [x] RLS habilitado en `users`.
+- [x] Policy `service_role` permite acceso total.
+- [x] Policy `authenticated` filtra por `daycare_id`.
+- [x] `supabase/seed.sql` inserta 1 usuario staff vinculado a "Guardería Sala Soles".
+- [x] Tipos TypeScript generados incluyen tabla `users` y enums.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/` y `lib/`.
+- [x] `npm run build` compila.
 
 ## Decisions taken and discarded
 

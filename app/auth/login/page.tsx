@@ -30,7 +30,7 @@ function validatePassword(password: string): string | undefined {
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState("caro@opendaycare.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [submitted, setSubmitted] = useState(false);
@@ -53,7 +53,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
+    window.location.href = "/";
   }
 
   function handleFieldBlur(field: "email" | "password") {
@@ -111,6 +111,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => handleFieldBlur("email")}
+                placeholder="tu@email.com"
                 className="mb-1 w-full rounded-[14px] border-[1.5px] border-line bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B]"
               />
               {errors.email && <p className="mb-4 text-[13px] text-accent">{errors.email}</p>}

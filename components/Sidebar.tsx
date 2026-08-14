@@ -2,7 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 function SunIcon() {
   return (
@@ -73,6 +74,13 @@ const NAV_ITEMS: Array<{ label: string; icon: ReactNode; href: string; active?: 
 
 export function Sidebar({ isOpen, onClose, onNewPost }: { isOpen: boolean; onClose: () => void; onNewPost?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/auth/login");
+  }
 
   return (
     <>
@@ -138,9 +146,9 @@ export function Sidebar({ isOpen, onClose, onNewPost }: { isOpen: boolean; onClo
               <div className="text-sm font-extrabold text-ink">Caro Giménez</div>
               <div className="text-xs text-muted">Maestra · Soles</div>
             </div>
-            <Link href="/auth/login" title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
+            <button onClick={handleLogout} title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
               <LogoutIcon />
-            </Link>
+            </button>
           </div>
         </div>
       </aside>

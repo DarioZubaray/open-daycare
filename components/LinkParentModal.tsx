@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { LinkedParent } from "@/lib/children";
+import type { LinkedParent } from "@/lib/types";
 
 interface LinkParentModalProps {
   isOpen: boolean;

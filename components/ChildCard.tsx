@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { Child } from "@/lib/children";
+import type { ChildWithRoom } from "@/lib/types";
+import { getChildAvatar, getChildInitial, getChildAge, getChildBadge } from "@/lib/types";
 
 function ChevronIcon() {
   return (
@@ -9,14 +10,12 @@ function ChevronIcon() {
   );
 }
 
-export function ChildCard({ child }: { child: Child }) {
-  const parentCount = child.parents.length;
-  const parentLabel =
-    parentCount === 0
-      ? "sin padres vinculados"
-      : parentCount === 1
-        ? "1 padre vinculado"
-        : `${parentCount} padres vinculados`;
+export function ChildCard({ child }: { child: ChildWithRoom }) {
+  const { avatarBg, avatarColor } = getChildAvatar(child.id);
+  const initial = getChildInitial(child.full_name);
+  const age = getChildAge(child.birth_date);
+  const badge = getChildBadge(child.allergy_tags);
+  const roomName = child.rooms?.name ?? "—";
 
   return (
     <Link
@@ -25,24 +24,24 @@ export function ChildCard({ child }: { child: Child }) {
     >
       <div
         className="flex h-12 w-12 flex-none items-center justify-center rounded-full font-heading text-[19px] font-semibold"
-        style={{ background: child.avatarBg, color: child.avatarColor }}
+        style={{ background: avatarBg, color: avatarColor }}
       >
-        {child.initial}
+        {initial}
       </div>
       <div className="min-w-0 flex-1">
         <div className="font-heading text-[16px] font-semibold text-ink">
-          {child.name}
+          {child.full_name}
         </div>
         <div className="text-[13px] text-muted">
-          {child.age} · {parentLabel}
+          {age} · Sala {roomName}
         </div>
       </div>
-      {child.badge ? (
+      {badge ? (
         <span
           className="flex-none rounded-full px-[9px] py-[5px] text-[11px] font-extrabold"
-          style={{ background: child.badge.bg, color: child.badge.color }}
+          style={{ background: badge.bg, color: badge.color }}
         >
-          {child.badge.label}
+          {badge.label}
         </span>
       ) : (
         <ChevronIcon />

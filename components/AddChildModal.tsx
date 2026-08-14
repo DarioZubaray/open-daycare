@@ -1,24 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import type { Child } from "@/lib/children";
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import type { Room } from "@/lib/types";
 
 interface AddChildModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddChild: (child: Child) => void;
+  onChildAdded: () => void;
 }
 
-const ROOMS = ["Soles", "Lunas", "Estrellas"] as const;
-
-export function AddChildModal({ isOpen, onClose, onAddChild }: AddChildModalProps) {
+export function AddChildModal({ isOpen, onClose, onChildAdded }: AddChildModalProps) {
   const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [room, setRoom] = useState<string>(ROOMS[0]);
+  const [roomId, setRoomId] = useState("");
   const [allergies, setAllergies] = useState<string[]>([]);
   const [allergyInput, setAllergyInput] = useState("");
   const [medicalNotes, setMedicalNotes] = useState("");
   const [errors, setErrors] = useState<{ fullName?: string; birthDate?: string }>({});
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const supabase = createClient();
+    supabase
+      .from("rooms")
+      .select("*")
+      .order("name")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setRooms(data);
+          setRoomId(data[0].id);
+        }
+      });
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -37,53 +53,47 @@ export function AddChildModal({ isOpen, onClose, onAddChild }: AddChildModalProp
             Agregar niño
           </span>
           <button
-            onClick={() => {
+            onClick={async () => {
               const newErrors: { fullName?: string; birthDate?: string } = {};
               if (!fullName.trim()) newErrors.fullName = "El nombre es obligatorio";
               if (!/^\d{2}\/\d{2}\/\d{4}$/.test(birthDate)) newErrors.birthDate = "Fecha inválida";
               setErrors(newErrors);
               if (Object.keys(newErrors).length > 0) return;
 
-              console.log("Nuevo niño:", { fullName, birthDate, room, allergies, medicalNotes });
+              setSaving(true);
 
-              const id = fullName
-                .trim()
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/(^-|-$)/g, "");
+              const parts = birthDate.split("/");
+              const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
 
-              const now = new Date();
-          const joinDate = `${["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][now.getMonth()]} ${now.getFullYear()}`;
-
-              onAddChild({
-                id,
-                name: fullName.trim(),
-                age: "0 años",
-                room,
-                initial: fullName.trim().charAt(0).toUpperCase(),
-                avatarBg: "#E8D5C4",
-                avatarColor: "#8B7355",
-                parents: [],
-                birthDate,
-                joinDate,
-                allergies,
-                allergyNotes: medicalNotes || undefined,
+              const supabase = createClient();
+              const { error } = await supabase.from("children").insert({
+                full_name: fullName.trim(),
+                birth_date: isoDate,
+                room_id: roomId,
+                allergy_tags: allergies,
+                medical_notes: medicalNotes || null,
               });
+
+              setSaving(false);
+
+              if (error) {
+                console.error("Error inserting child:", error);
+                return;
+              }
 
               setFullName("");
               setBirthDate("");
-              setRoom(ROOMS[0]);
               setAllergies([]);
               setAllergyInput("");
               setMedicalNotes("");
               setErrors({});
               onClose();
+              onChildAdded();
             }}
-            className="text-[15px] font-extrabold text-accent"
+            disabled={saving}
+            className={`text-[15px] font-extrabold text-accent ${saving ? "cursor-not-allowed opacity-50" : ""}`}
           >
-            Guardar
+            {saving ? "Guardando…" : "Guardar"}
           </button>
         </div>
 
@@ -130,12 +140,12 @@ export function AddChildModal({ isOpen, onClose, onAddChild }: AddChildModalProp
                 SALA
               </label>
               <select
-                value={room}
-                onChange={(e) => setRoom(e.target.value)}
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
                 className="w-full appearance-none rounded-[14px] border-[1.5px] border-line bg-white px-4 py-[13px] text-[15px] font-bold text-ink"
               >
-                {ROOMS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
+                {rooms.map((r) => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
                 ))}
               </select>
             </div>

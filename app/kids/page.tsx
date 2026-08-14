@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/utils/supabase/client";
 import { ChildCard } from "@/components/ChildCard";
 import { AddChildModal } from "@/components/AddChildModal";
-import { children } from "@/lib/children";
-import type { Child } from "@/lib/children";
+import type { ChildWithRoom } from "@/lib/types";
 
 function PlusIcon() {
   return (
@@ -25,11 +25,27 @@ function SearchIcon() {
 
 export default function KidsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [kidsList, setKidsList] = useState<Child[]>(children);
+  const [kidsList, setKidsList] = useState<ChildWithRoom[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddChild = (child: Child) => {
-    setKidsList((prev) => [...prev, child]);
-  };
+  const fetchChildren = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("children")
+      .select("*, rooms(name)")
+      .eq("status", "active")
+      .order("full_name");
+    if (data) setKidsList(data as ChildWithRoom[]);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchChildren();
+  }, [fetchChildren]);
+
+  const handleChildAdded = useCallback(() => {
+    fetchChildren();
+  }, [fetchChildren]);
 
   return (
     <main className="h-screen min-w-0 flex-1 overflow-y-auto">
@@ -64,21 +80,31 @@ export default function KidsPage() {
           <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-ink">
             SALA SOLES
           </span>
-          <span className="text-[13px] text-muted">{kidsList.length} niños</span>
+          <span className="text-[13px] text-muted">
+            {loading ? "Cargando…" : `${kidsList.length} niños`}
+          </span>
           <span className="h-px flex-1 bg-[#E7DAC8]" />
         </div>
 
-        <div className="grid grid-cols-2 gap-[14px]">
-          {kidsList.map((child) => (
-            <ChildCard key={child.id} child={child} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 gap-[14px]">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-[76px] animate-pulse rounded-[18px] border border-line bg-surface" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-[14px]">
+            {kidsList.map((child) => (
+              <ChildCard key={child.id} child={child} />
+            ))}
+          </div>
+        )}
       </div>
 
       <AddChildModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAddChild={handleAddChild}
+        onChildAdded={handleChildAdded}
       />
     </main>
   );

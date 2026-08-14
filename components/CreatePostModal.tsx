@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { children } from "@/lib/children";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import type { ChildWithRoom } from "@/lib/types";
+import { getChildAvatar, getChildInitial } from "@/lib/types";
 
 const POST_TYPES = [
   { id: "comida", label: "Comida", bg: "#9A7B1E", color: "#fff" },
@@ -25,6 +27,20 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dbChildren, setDbChildren] = useState<ChildWithRoom[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const supabase = createClient();
+    supabase
+      .from("children")
+      .select("*, rooms(name)")
+      .eq("status", "active")
+      .order("full_name")
+      .then(({ data }) => {
+        if (data) setDbChildren(data as ChildWithRoom[]);
+      });
+  }, [isOpen]);
 
   const resetForm = useCallback(() => {
     setSelectedChildren([]);
@@ -100,7 +116,7 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
     if (isDisabled) return;
     console.log("Nueva publicación:", {
       children: selectedChildren.includes("all")
-        ? children.map((c) => c.id)
+        ? dbChildren.map((c) => c.id)
         : selectedChildren,
       types: selectedTypes,
       description,
@@ -146,7 +162,9 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
             PARA
           </div>
           <div className="mb-6 flex flex-wrap gap-[9px]">
-            {children.map((child) => {
+            {dbChildren.map((child) => {
+              const { avatarBg, avatarColor } = getChildAvatar(child.id);
+              const initial = getChildInitial(child.full_name);
               const isSelected =
                 selectedChildren.includes(child.id) ||
                 selectedChildren.includes("all");
@@ -163,13 +181,13 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
                   <span
                     className="flex h-[26px] w-[26px] items-center justify-center rounded-full font-heading text-[13px] font-semibold"
                     style={{
-                      background: child.avatarBg,
-                      color: child.avatarColor,
+                      background: avatarBg,
+                      color: avatarColor,
                     }}
                   >
-                    {child.initial}
+                    {initial}
                   </span>
-                  {child.name.split(" ")[0]}
+                  {child.full_name.split(" ")[0]}
                 </button>
               );
             })}

@@ -1,6 +1,6 @@
 # SPEC 10 — Tablas rooms y children + integración con UI
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 07, SPEC 08
 > **Date:** 2026-08-14
 > **Objective:** Crear tablas `rooms` y `children` en Supabase, insertar 3 salas iniciales, integrar el listado de niños desde la base de datos y reemplazar los datos hardcodeados en la UI.
@@ -130,22 +130,22 @@ export interface Room {
 
 ## Acceptance criteria
 
-- [ ] Tabla `rooms` existe en Supabase con RLS habilitado.
-- [ ] Tabla `children` existe en Supabase con RLS habilitado.
-- [ ] Enum `child_status` creado (`active`, `archived`).
-- [ ] 3 salas iniciales insertadas (Soles, Lunas, Estrellas).
-- [ ] `lib/children.ts` eliminado.
-- [ ] `lib/types.ts` creado con tipos `Child` y `Room`.
-- [ ] `AddChildModal` hace INSERT a Supabase al guardar (sin `console.log`).
-- [ ] Dropdown de salas en `AddChildModal` carga opciones desde `rooms` en DB.
-- [ ] `/kids` carga niños desde Supabase al montar (con loading state).
-- [ ] Al agregar un niño desde el modal, el listado se actualiza automáticamente.
-- [ ] Feed (`/`) muestra conteo dinámico de niños activos.
-- [ ] `CreatePostModal` no importa de `lib/children.ts`.
-- [ ] No hay ningún import de `lib/children.ts` en todo el proyecto.
-- [ ] `npx tsc --noEmit` sin errores.
-- [ ] `npm run lint` sin errores en `app/`, `components/`, `lib/`.
-- [ ] `npm run build` compila.
+- [x] Tabla `rooms` existe en Supabase con RLS habilitado.
+- [x] Tabla `children` existe en Supabase con RLS habilitado.
+- [x] Enum `child_status` creado (`active`, `archived`).
+- [x] 3 salas iniciales insertadas (Soles, Lunas, Estrellas).
+- [x] `lib/children.ts` eliminado.
+- [x] `lib/types.ts` creado con tipos `Child` y `Room`.
+- [x] `AddChildModal` hace INSERT a Supabase al guardar (sin `console.log`).
+- [x] Dropdown de salas en `AddChildModal` carga opciones desde `rooms` en DB.
+- [x] `/kids` carga niños desde Supabase al montar (con loading state).
+- [x] Al agregar un niño desde el modal, el listado se actualiza automáticamente.
+- [x] Feed (`/`) muestra conteo dinámico de niños activos.
+- [x] `CreatePostModal` no importa de `lib/children.ts`.
+- [x] No hay ningún import de `lib/children.ts` en todo el proyecto.
+- [x] `npx tsc --noEmit` sin errores.
+- [x] `npm run lint` sin errores en `app/`, `components/`, `lib/`.
+- [x] `npm run build` compila.
 
 ## Decisions taken and discarded
 

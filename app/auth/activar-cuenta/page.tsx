@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthLayout } from "@/components/AuthLayout";
+import { createClient } from "@/utils/supabase/client";
 
 function SunIcon() {
   return (
@@ -41,23 +42,43 @@ function validatePassword(password: string): string | undefined {
 
 export default function ActivateAccountPage() {
   const router = useRouter();
+  const supabase = createClient();
   const [invitationCode, setInvitationCode] = useState("7K4P9");
   const [email, setEmail] = useState("lucia.fernandez@gmail.com");
   const [password, setPassword] = useState("");
   const [authorizePhotos, setAuthorizePhotos] = useState(false);
-  const [errors, setErrors] = useState<{ invitationCode?: string; email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ invitationCode?: string; email?: string; password?: string; general?: string }>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const codeErr = validateInvitationCode(invitationCode);
     const emailErr = validateEmail(email);
     const passwordErr = validatePassword(password);
     setErrors({ invitationCode: codeErr, email: emailErr, password: passwordErr });
     setSubmitted(true);
-    if (!codeErr && !emailErr && !passwordErr) {
-      router.push("/");
+    if (codeErr || emailErr || passwordErr) return;
+
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          role: "parent",
+          full_name: email.split("@")[0],
+        },
+      },
+    });
+    setLoading(false);
+
+    if (error) {
+      setErrors((prev) => ({ ...prev, general: "Error al crear la cuenta. Intentá de nuevo." }));
+      return;
     }
+
+    router.push("/");
   }
 
   function handleFieldBlur(field: "invitationCode" | "email" | "password") {
@@ -94,6 +115,10 @@ export default function ActivateAccountPage() {
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
+          {errors.general && (
+            <p className="mb-4 rounded-[10px] bg-red-50 p-3 text-[13.5px] text-red-600">{errors.general}</p>
+          )}
+
           <label className="mb-2 block text-[12px] font-bold tracking-[0.7px] text-subtle">CÓDIGO DE INVITACIÓN</label>
           <input
             type="text"
@@ -145,9 +170,10 @@ export default function ActivateAccountPage() {
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-[15px] bg-linear-to-b from-primary-from to-primary-to py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)]"
+            disabled={loading}
+            className="w-full cursor-pointer rounded-[15px] bg-linear-to-b from-primary-from to-primary-to py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)] disabled:opacity-60"
           >
-            Activar mi cuenta
+            {loading ? "Activando cuenta..." : "Activar mi cuenta"}
           </button>
         </form>
 

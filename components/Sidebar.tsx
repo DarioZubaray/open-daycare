@@ -2,7 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 function SunIcon() {
   return (
@@ -71,8 +72,15 @@ const NAV_ITEMS: Array<{ label: string; icon: ReactNode; href: string; active?: 
   { label: "Mi cuenta", icon: <UserIcon />, href: "#" },
 ];
 
-export function Sidebar({ isOpen, onClose, onNewPost }: { isOpen: boolean; onClose: () => void; onNewPost?: () => void }) {
+export function Sidebar({ isOpen, onClose, onNewPost, userName = "", role = "Maestra", initials = "" }: { isOpen: boolean; onClose: () => void; onNewPost?: () => void; userName?: string; role?: string; initials?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/auth/login");
+  }
 
   return (
     <>
@@ -132,15 +140,15 @@ export function Sidebar({ isOpen, onClose, onNewPost }: { isOpen: boolean; onClo
         <div className="mt-2.5 border-t border-line pt-3.5">
           <div className="flex items-center gap-[11px] px-2 py-1.5">
             <div className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-[#F2937A] font-heading text-base font-semibold text-white">
-              C
+              {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-extrabold text-ink">Caro Giménez</div>
-              <div className="text-xs text-muted">Maestra · Soles</div>
+              <div className="text-sm font-extrabold text-ink">{userName}</div>
+              <div className="text-xs text-muted">{role} · Soles</div>
             </div>
-            <Link href="/auth/login" title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
+            <button onClick={handleLogout} title="Cerrar sesión" className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-subtle">
               <LogoutIcon />
-            </Link>
+            </button>
           </div>
         </div>
       </aside>

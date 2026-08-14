@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthLayout } from "@/components/AuthLayout";
+import { createClient } from "@/utils/supabase/client";
 
 function SunIcon() {
   return (
@@ -28,20 +29,31 @@ function validatePassword(password: string): string | undefined {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("caro@opendaycare.com");
+  const supabase = createClient();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const emailErr = validateEmail(email);
     const passwordErr = validatePassword(password);
     setErrors({ email: emailErr, password: passwordErr });
     setSubmitted(true);
-    if (!emailErr && !passwordErr) {
-      router.push("/");
+    if (emailErr || passwordErr) return;
+
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+
+    if (error) {
+      setErrors((prev) => ({ ...prev, general: "Email o contraseña incorrectos." }));
+      return;
     }
+
+    window.location.href = "/";
   }
 
   function handleFieldBlur(field: "email" | "password") {
@@ -89,12 +101,17 @@ export default function LoginPage() {
             <p className="mb-7 mt-1 text-[15px] text-subtle">Ingresá para ver el día de hoy.</p>
 
             <form onSubmit={handleSubmit} noValidate>
+              {errors.general && (
+                <p className="mb-4 rounded-[10px] bg-red-50 p-3 text-[13.5px] text-red-600">{errors.general}</p>
+              )}
+
               <label className="mb-2 block text-[12px] font-bold tracking-[0.7px] text-subtle">EMAIL</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => handleFieldBlur("email")}
+                placeholder="tu@email.com"
                 className="mb-1 w-full rounded-[14px] border-[1.5px] border-line bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B]"
               />
               {errors.email && <p className="mb-4 text-[13px] text-accent">{errors.email}</p>}
@@ -116,9 +133,10 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="mb-6 w-full cursor-pointer rounded-[15px] bg-linear-to-b from-primary-from to-primary-to py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)]"
+                disabled={loading}
+                className="mb-6 w-full cursor-pointer rounded-[15px] bg-linear-to-b from-primary-from to-primary-to py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)] disabled:opacity-60"
               >
-                Iniciar sesión
+                {loading ? "Iniciando sesión..." : "Iniciar sesión"}
               </button>
             </form>
 

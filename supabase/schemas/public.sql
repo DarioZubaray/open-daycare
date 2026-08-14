@@ -58,18 +58,27 @@ create policy "Service role full access"
   using (true)
   with check (true);
 
-create policy "Users can view same daycare"
+-- NOTE: These policies use auth.uid() = id (no self-referential subqueries).
+-- The original "same daycare" policies queried the users table from within RLS
+-- policies on the same table, which caused PostgREST to return 500 errors.
+create policy "Users can read own profile"
   on users
   for select
   to authenticated
-  using (daycare_id = (select daycare_id from users where id = auth.uid()));
+  using (( SELECT auth.uid() AS uid) = id);
 
-create policy "Users can update same daycare"
+create policy "Users can update own profile"
   on users
   for update
   to authenticated
-  using (daycare_id = (select daycare_id from users where id = auth.uid()))
-  with check (daycare_id = (select daycare_id from users where id = auth.uid()));
+  using (( SELECT auth.uid() AS uid) = id)
+  with check (( SELECT auth.uid() AS uid) = id);
+
+create policy "Users can insert own profile"
+  on users
+  for insert
+  to authenticated
+  with check (( SELECT auth.uid() AS uid) = id);
 
 -- ============================================
 -- TRIGGERS

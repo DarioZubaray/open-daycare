@@ -30,9 +30,13 @@ export default async function FeedPage() {
     .eq("id", user.id)
     .single();
 
-    console.log({profile, user});
   const displayName = profile?.full_name ?? user?.user_metadata?.full_name ?? " como estás?";
   const firstName = displayName.split(" ")[0];
+
+  const { count: childrenCount } = await supabase
+    .from("children")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "active");
 
   return (
     <div className="flex min-h-screen bg-cream">
@@ -48,7 +52,7 @@ export default async function FeedPage() {
               Buenas, {firstName}
             </h1>
             <p className="mt-1 text-[14.5px] text-subtle">
-              12 niños · {formatToday()}
+              {childrenCount ?? 0} niños · {formatToday()}
             </p>
           </div>
 

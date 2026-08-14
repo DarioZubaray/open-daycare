@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { children } from "@/lib/children";
-import type { LinkedParent } from "@/lib/children";
+import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/utils/supabase/client";
+import type { ChildWithRoom, LinkedParent } from "@/lib/types";
+import { getChildAvatar, getChildInitial, getChildAge, getChildBadge, formatDateBirth, formatDateEnrolled } from "@/lib/types";
 import { LinkParentModal } from "@/components/LinkParentModal";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -53,30 +54,41 @@ export default function KidProfilePage({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parentsList, setParentsList] = useState<LinkedParent[]>([]);
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+  const [child, setChild] = useState<ChildWithRoom | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Resolve params synchronously — Next.js client components receive the resolved value
-  const [resolvedParams, setResolvedParams] = useState<{
-    id: string;
-  } | null>(null);
-
-  // Use a one-time effect to resolve params
   useState(() => {
     params.then((p) => setResolvedParams(p));
   });
 
-  const child = resolvedParams
-    ? children.find((c) => c.id === resolvedParams.id)
-    : null;
-
-  // Initialize parentsList when child is found
-  const [initialized, setInitialized] = useState(false);
-  if (child && !initialized) {
-    setParentsList(child.parents);
-    setInitialized(true);
-  }
+  useEffect(() => {
+    if (!resolvedParams) return;
+    const supabase = createClient();
+    supabase
+      .from("children")
+      .select("*, rooms(name)")
+      .eq("id", resolvedParams.id)
+      .single()
+      .then(({ data }) => {
+        setChild(data as ChildWithRoom | null);
+        setLoading(false);
+      });
+  }, [resolvedParams]);
 
   function handleAddParent(parent: LinkedParent) {
     setParentsList((prev) => [...prev, parent]);
+  }
+
+  if (loading) {
+    return (
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
+          <div className="h-[20px] w-[160px] animate-pulse rounded bg-line" />
+          <div className="mt-6 h-[84px] w-[300px] animate-pulse rounded-2xl bg-line" />
+        </div>
+      </main>
+    );
   }
 
   if (!child) {
@@ -96,6 +108,14 @@ export default function KidProfilePage({
     );
   }
 
+  const { avatarBg, avatarColor } = getChildAvatar(child.id);
+  const initial = getChildInitial(child.full_name);
+  const age = getChildAge(child.birth_date);
+  const badge = getChildBadge(child.allergy_tags);
+  const roomName = child.rooms?.name ?? "—";
+  const birthDateFormatted = formatDateBirth(child.birth_date);
+  const enrolledFormatted = formatDateEnrolled(child.enrolled_at);
+
   return (
     <main className="h-screen min-w-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
@@ -112,18 +132,26 @@ export default function KidProfilePage({
             <div className="flex items-center gap-[18px]">
               <div
                 className="flex h-[84px] w-[84px] flex-none items-center justify-center rounded-full font-heading text-[34px] font-semibold"
-                style={{ background: child.avatarBg, color: child.avatarColor }}
+                style={{ background: avatarBg, color: avatarColor }}
               >
-                {child.initial}
+                {initial}
               </div>
               <div className="flex-1">
                 <h1 className="m-0 font-heading text-[28px] font-semibold text-ink">
-                  {child.name}
+                  {child.full_name}
                 </h1>
                 <p className="mt-[3px] text-[15px] text-subtle">
-                  {child.age} · Sala {child.room}
+                  {age} · Sala {roomName}
                 </p>
               </div>
+              {badge && (
+                <span
+                  className="flex-none rounded-full px-[9px] py-[5px] text-[11px] font-extrabold"
+                  style={{ background: badge.bg, color: badge.color }}
+                >
+                  {badge.label}
+                </span>
+              )}
               <a
                 href="#"
                 className="flex-none rounded-xl border-[1.5px] border-line bg-surface px-4 py-[9px] text-[14px] font-bold text-[#6E6359]"
@@ -132,7 +160,7 @@ export default function KidProfilePage({
               </a>
             </div>
 
-            {child.allergyNotes ? (
+            {child.medical_notes ? (
               <div className="flex gap-[14px] rounded-2xl bg-[#FBDAD6] p-[18px]">
                 <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px] bg-[#F4A8A0]">
                   <AlertIcon />
@@ -142,7 +170,7 @@ export default function KidProfilePage({
                     Alergias y notas
                   </div>
                   <div className="text-[14.5px] leading-[1.5] text-[#B25249]">
-                    {child.allergyNotes}
+                    {child.medical_notes}
                   </div>
                 </div>
               </div>
@@ -151,15 +179,15 @@ export default function KidProfilePage({
             <div className="overflow-hidden rounded-2xl border border-line bg-surface">
               <div className="flex justify-between border-b border-[#F0E6D8] px-[18px] py-[15px]">
                 <span className="text-[14.5px] text-subtle">Fecha de nacimiento</span>
-                <span className="text-[14.5px] font-extrabold text-ink">{child.birthDate}</span>
+                <span className="text-[14.5px] font-extrabold text-ink">{birthDateFormatted}</span>
               </div>
               <div className="flex justify-between border-b border-[#F0E6D8] px-[18px] py-[15px]">
                 <span className="text-[14.5px] text-subtle">Sala</span>
-                <span className="text-[14.5px] font-extrabold text-ink">{child.room}</span>
+                <span className="text-[14.5px] font-extrabold text-ink">{roomName}</span>
               </div>
               <div className="flex justify-between px-[18px] py-[15px]">
                 <span className="text-[14.5px] text-subtle">Ingreso</span>
-                <span className="text-[14.5px] font-extrabold text-ink">{child.joinDate}</span>
+                <span className="text-[14.5px] font-extrabold text-ink">{enrolledFormatted}</span>
               </div>
             </div>
           </div>
@@ -227,7 +255,7 @@ export default function KidProfilePage({
       <LinkParentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        childName={child.name}
+        childName={child.full_name}
         onAddParent={handleAddParent}
       />
     </main>

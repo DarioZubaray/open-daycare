@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      children: {
+        Row: {
+          allergy_tags: string[] | null
+          birth_date: string
+          created_at: string
+          enrolled_at: string
+          full_name: string
+          id: string
+          medical_notes: string | null
+          photo_consent: boolean
+          room_id: string
+          status: Database["public"]["Enums"]["child_status"]
+          updated_at: string
+        }
+        Insert: {
+          allergy_tags?: string[] | null
+          birth_date: string
+          created_at?: string
+          enrolled_at?: string
+          full_name: string
+          id?: string
+          medical_notes?: string | null
+          photo_consent?: boolean
+          room_id: string
+          status?: Database["public"]["Enums"]["child_status"]
+          updated_at?: string
+        }
+        Update: {
+          allergy_tags?: string[] | null
+          birth_date?: string
+          created_at?: string
+          enrolled_at?: string
+          full_name?: string
+          id?: string
+          medical_notes?: string | null
+          photo_consent?: boolean
+          room_id?: string
+          status?: Database["public"]["Enums"]["child_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daycares: {
         Row: {
           address: string | null
@@ -34,6 +84,131 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          child_id: string
+          code: string
+          created_at: string
+          email: string
+          expires_at: string
+          full_name: string
+          id: string
+          invited_by: string
+          relationship: Database["public"]["Enums"]["relationship_type"]
+          status: Database["public"]["Enums"]["invitation_status"]
+        }
+        Insert: {
+          accepted_at?: string | null
+          child_id: string
+          code: string
+          created_at?: string
+          email: string
+          expires_at: string
+          full_name: string
+          id?: string
+          invited_by: string
+          relationship: Database["public"]["Enums"]["relationship_type"]
+          status?: Database["public"]["Enums"]["invitation_status"]
+        }
+        Update: {
+          accepted_at?: string | null
+          child_id?: string
+          code?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          invited_by?: string
+          relationship?: Database["public"]["Enums"]["relationship_type"]
+          status?: Database["public"]["Enums"]["invitation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parent_children: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          parent_id: string
+          relationship: Database["public"]["Enums"]["relationship_type"]
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          parent_id: string
+          relationship: Database["public"]["Enums"]["relationship_type"]
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+          relationship?: Database["public"]["Enums"]["relationship_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_children_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          created_at: string
+          daycare_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          daycare_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          daycare_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_daycare_id_fkey"
+            columns: ["daycare_id"]
+            isOneToOne: false
+            referencedRelation: "daycares"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -87,9 +262,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      enable_auth_trigger: { Args: never; Returns: undefined }
     }
     Enums: {
+      child_status: "active" | "archived"
+      invitation_status: "pending" | "accepted" | "expired" | "cancelled"
+      relationship_type: "father" | "mother" | "guardian"
       user_role: "staff" | "parent" | "admin"
       user_status: "pending" | "active"
     }
@@ -219,6 +397,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      child_status: ["active", "archived"],
+      invitation_status: ["pending", "accepted", "expired", "cancelled"],
+      relationship_type: ["father", "mother", "guardian"],
       user_role: ["staff", "parent", "admin"],
       user_status: ["pending", "active"],
     },

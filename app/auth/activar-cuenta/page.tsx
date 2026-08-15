@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthLayout } from "@/components/AuthLayout";
 import { createClient } from "@/utils/supabase/client";
+import type { Invitation } from "@/lib/invitations";
+
+interface ChildInfo {
+  full_name: string;
+  room_name: string;
+}
 
 function SunIcon() {
   return (
@@ -23,11 +29,6 @@ function CheckIcon() {
   );
 }
 
-function validateInvitationCode(code: string): string | undefined {
-  if (!code.trim()) return "El código de invitación es obligatorio.";
-  return undefined;
-}
-
 function validateEmail(email: string): string | undefined {
   if (!email.trim()) return "El email es obligatorio.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Ingresá un email válido.";
@@ -40,20 +41,103 @@ function validatePassword(password: string): string | undefined {
   return undefined;
 }
 
-export default function ActivateAccountPage() {
+function ActivateAccountForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
-  const [invitationCode, setInvitationCode] = useState("7K4P9");
-  const [email, setEmail] = useState("lucia.fernandez@gmail.com");
+
+  const codeFromUrl = searchParams.get("code") ?? "";
+
+  const [invitationCode, setInvitationCode] = useState(codeFromUrl);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authorizePhotos, setAuthorizePhotos] = useState(false);
-  const [errors, setErrors] = useState<{ invitationCode?: string; email?: string; password?: string; general?: string }>({});
+  const [errors, setErrors] = useState<{
+    invitationCode?: string;
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [childInfo, setChildInfo] = useState<ChildInfo | null>(null);
+  const [validatingCode, setValidatingCode] = useState(false);
+
+  const validateInvitationCode = useCallback(
+    async (code: string): Promise<string | undefined> => {
+      if (!code.trim()) return "El código de invitación es obligatorio.";
+
+      setValidatingCode(true);
+      const { data, error } = await supabase
+        .from("invitations")
+        .select("*")
+        .eq("code", code.trim())
+        .single();
+      setValidatingCode(false);
+
+      if (error || !data) return "Código inválido.";
+
+      if (data.status !== "pending") return "La invitación ya fue utilizada.";
+
+      if (new Date(data.expires_at) < new Date()) return "La invitación expiró.";
+
+      setInvitation(data as Invitation);
+      setEmail(data.email);
+
+      const { data: childData } = await supabase
+        .from("children")
+        .select("full_name, rooms(name)")
+        .eq("id", data.child_id)
+        .single();
+
+      if (childData) {
+        const rooms = childData.rooms as unknown as { name: string } | null;
+        setChildInfo({
+          full_name: childData.full_name,
+          room_name: rooms?.name ?? "—",
+        });
+      }
+
+      return undefined;
+    },
+    [supabase]
+  );
+
+  useEffect(() => {
+    if (!codeFromUrl) return;
+
+    let cancelled = false;
+
+    async function validate() {
+      const err = await validateInvitationCode(codeFromUrl);
+      if (!cancelled && err) {
+        setErrors((prev) => ({ ...prev, invitationCode: err }));
+      }
+    }
+
+    validate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [codeFromUrl, validateInvitationCode]);
+
+  async function handleCodeBlur() {
+    if (!invitationCode.trim()) return;
+    const err = await validateInvitationCode(invitationCode);
+    if (err) {
+      setErrors((prev) => ({ ...prev, invitationCode: err }));
+    } else {
+      setErrors((prev) => ({ ...prev, invitationCode: undefined }));
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const codeErr = validateInvitationCode(invitationCode);
+
+    const codeErr = await validateInvitationCode(invitationCode);
     const emailErr = validateEmail(email);
     const passwordErr = validatePassword(password);
     setErrors({ invitationCode: codeErr, email: emailErr, password: passwordErr });
@@ -61,21 +145,37 @@ export default function ActivateAccountPage() {
     if (codeErr || emailErr || passwordErr) return;
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           role: "parent",
-          full_name: email.split("@")[0],
+          full_name: invitation?.full_name ?? email.split("@")[0],
         },
       },
     });
     setLoading(false);
 
-    if (error) {
+    if (signUpError) {
       setErrors((prev) => ({ ...prev, general: "Error al crear la cuenta. Intentá de nuevo." }));
       return;
+    }
+
+    if (signUpData.user && invitation) {
+      await supabase.from("parent_children").insert({
+        parent_id: signUpData.user.id,
+        child_id: invitation.child_id,
+        relationship: invitation.relationship,
+      });
+
+      await supabase
+        .from("invitations")
+        .update({
+          status: "accepted",
+          accepted_at: new Date().toISOString(),
+        })
+        .eq("id", invitation.id);
     }
 
     router.push("/");
@@ -84,13 +184,15 @@ export default function ActivateAccountPage() {
   function handleFieldBlur(field: "invitationCode" | "email" | "password") {
     if (!submitted) return;
     if (field === "invitationCode") {
-      setErrors((prev) => ({ ...prev, invitationCode: validateInvitationCode(invitationCode) }));
+      handleCodeBlur();
     } else if (field === "email") {
       setErrors((prev) => ({ ...prev, email: validateEmail(email) }));
     } else {
       setErrors((prev) => ({ ...prev, password: validatePassword(password) }));
     }
   }
+
+  const invitationInitial = childInfo?.full_name?.charAt(0)?.toUpperCase() ?? "?";
 
   return (
     <AuthLayout>
@@ -106,11 +208,13 @@ export default function ActivateAccountPage() {
         {/* Invitation card */}
         <div className="mb-[22px] flex items-center gap-[14px] rounded-[16px] border-[1.5px] border-line bg-white p-[14px_16px]">
           <div className="flex h-[44px] w-[44px] flex-none items-center justify-center rounded-full bg-[#A9D9E8] font-heading text-[19px] font-semibold text-[#1F7A93]">
-            M
+            {invitationInitial}
           </div>
           <div>
             <div className="text-[13px] text-subtle">Te invitaron a seguir a</div>
-            <div className="font-heading text-[17px] font-semibold text-ink">Mateo · Sala Soles</div>
+            <div className="font-heading text-[17px] font-semibold text-ink">
+              {childInfo ? `${childInfo.full_name} · Sala ${childInfo.room_name}` : "Cargando..."}
+            </div>
           </div>
         </div>
 
@@ -125,10 +229,12 @@ export default function ActivateAccountPage() {
             value={invitationCode}
             onChange={(e) => setInvitationCode(e.target.value)}
             onBlur={() => handleFieldBlur("invitationCode")}
+            placeholder="Ej. 7K4P9"
             className="mb-1 w-full rounded-[14px] border-[1.5px] border-line bg-white px-4 py-[14px] font-heading text-[18px] font-bold tracking-[3px] text-ink outline-none"
           />
           {errors.invitationCode && <p className="mb-4 text-[13px] text-accent">{errors.invitationCode}</p>}
-          {!errors.invitationCode && <div className="mb-4" />}
+          {validatingCode && <p className="mb-4 text-[13px] text-subtle">Validando código...</p>}
+          {!errors.invitationCode && !validatingCode && <div className="mb-4" />}
 
           <label className="mb-2 block text-[12px] font-bold tracking-[0.7px] text-subtle">EMAIL</label>
           <input
@@ -185,5 +291,19 @@ export default function ActivateAccountPage() {
         </p>
       </div>
     </AuthLayout>
+  );
+}
+
+export default function ActivateAccountPage() {
+  return (
+    <Suspense fallback={
+      <AuthLayout>
+        <div className="w-full max-w-[440px]">
+          <div className="h-[20px] w-[200px] animate-pulse rounded bg-line" />
+        </div>
+      </AuthLayout>
+    }>
+      <ActivateAccountForm />
+    </Suspense>
   );
 }

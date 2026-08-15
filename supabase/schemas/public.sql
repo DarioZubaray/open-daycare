@@ -7,6 +7,7 @@
 
 create type user_role as enum ('staff', 'parent', 'admin');
 create type user_status as enum ('pending', 'active');
+create type child_status as enum ('active', 'archived');
 
 -- ============================================
 -- TABLES
@@ -35,6 +36,29 @@ create table users (
 );
 
 create index idx_users_daycare_id on users(daycare_id);
+
+-- rooms (SPEC 10)
+create table rooms (
+  id         uuid primary key default gen_random_uuid(),
+  daycare_id uuid not null references daycares(id) on delete cascade,
+  name       text not null,
+  created_at timestamptz not null default now()
+);
+
+-- children (SPEC 10)
+create table children (
+  id             uuid primary key default gen_random_uuid(),
+  room_id        uuid not null references rooms(id) on delete restrict,
+  full_name      text not null,
+  birth_date     date not null,
+  enrolled_at    date not null default current_date,
+  medical_notes  text,
+  allergy_tags   text[] default '{}',
+  photo_consent  boolean not null default true,
+  status         child_status not null default 'active',
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
 
 -- ============================================
 -- ROW LEVEL SECURITY
@@ -79,6 +103,115 @@ create policy "Users can insert own profile"
   for insert
   to authenticated
   with check (( SELECT auth.uid() AS uid) = id);
+
+-- rooms RLS
+
+alter table rooms enable row level security;
+
+create policy "Service role full access on rooms"
+  on rooms
+  for all
+  to service_role
+  using (true)
+  with check (true);
+
+create policy "Users can view rooms in their daycare"
+  on rooms
+  for select
+  to authenticated
+  using (
+    daycare_id in (
+      select users.daycare_id
+      from users
+      where users.id = auth.uid()
+    )
+  );
+
+-- children RLS
+
+alter table children enable row level security;
+
+create policy "Service role full access on children"
+  on children
+  for all
+  to service_role
+  using (true)
+  with check (true);
+
+create policy "Users can view children in their daycare"
+  on children
+  for select
+  to authenticated
+  using (
+    room_id in (
+      select rooms.id
+      from rooms
+      where rooms.daycare_id in (
+        select users.daycare_id
+        from users
+        where users.id = auth.uid()
+      )
+    )
+  );
+
+create policy "Authenticated users can insert children in their daycare"
+  on children
+  for insert
+  to authenticated
+  with check (
+    room_id in (
+      select rooms.id
+      from rooms
+      where rooms.daycare_id in (
+        select users.daycare_id
+        from users
+        where users.id = auth.uid()
+      )
+    )
+  );
+
+create policy "Authenticated users can update children in their daycare"
+  on children
+  for update
+  to authenticated
+  using (
+    room_id in (
+      select rooms.id
+      from rooms
+      where rooms.daycare_id in (
+        select users.daycare_id
+        from users
+        where users.id = auth.uid()
+      )
+    )
+  )
+  with check (
+    room_id in (
+      select rooms.id
+      from rooms
+      where rooms.daycare_id in (
+        select users.daycare_id
+        from users
+        where users.id = auth.uid()
+      )
+    )
+  );
+
+create policy "Authenticated users can delete children in their daycare"
+  on children
+  for delete
+  to authenticated
+  using (
+    room_id in (
+      select rooms.id
+      from rooms
+      where rooms.daycare_id in (
+        select users.daycare_id
+        from users
+        where users.id = auth.uid()
+      )
+    )
+  );
 
 -- ============================================
 -- TRIGGERS

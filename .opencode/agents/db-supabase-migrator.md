@@ -1,6 +1,6 @@
 ---
 description: Audits DB-Schema reference against existing migrations, creates missing ones, auto-applies via Supabase MCP, and syncs the declarative schema.
-mode: primary
+mode: subagent
 model: opencode/mimo-v2.5-free
 temperature: 0
 permission:

@@ -1,6 +1,6 @@
 ---
 description: Verifies and marks the Acceptance criteria of a spec file. Uses Context7 for Next.js validation and Playwright for visual checks with vision.
-mode: primary
+mode: all
 model: opencode/mimo-v2.5-free
 temperature: 0
 permission:

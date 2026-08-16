@@ -6,6 +6,10 @@
     "spec": {
       "description": "Crea especificaciones de pantallas y funcionalidades",
       "template": "Carga y sigue la skill spec en .agents/skills/spec/SKILL.md.\n\nFeature: $ARGUMENTS"
+    },
+    "react-review": {
+      "description": "Revisa archivos React aplicando best practices (solo auditoría)",
+      "template": "Carga y sigue la skill react-best-practices en .agents/skills/react-best-practices/SKILL.md.\n\nArchivos: $ARGUMENTS"
     }
   },
   "references": {

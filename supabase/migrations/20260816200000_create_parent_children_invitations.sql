@@ -1,0 +1,20 @@
+-- ============================================
+-- NOTE: This migration was already applied via
+-- earlier Supabase MCP sessions. The tables
+-- parent_children and invitations, along with
+-- enums relationship_type and invitation_status,
+-- already exist in the database.
+--
+-- See Supabase migration history for details:
+-- - create_invitations_table
+-- - create_parent_children_table
+-- - fix_invitations_rls_policies
+-- - fix_parent_children_rls_policies
+-- - allow_anon_read_invitations_for_activation
+-- ============================================
+
+-- ENUM: relationship_type (already exists)
+-- ENUM: invitation_status (already exists)
+-- TABLE: parent_children (already exists)
+-- TABLE: invitations (already exists)
+-- RLS policies (already exist)

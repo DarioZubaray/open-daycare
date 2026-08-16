@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { generateInvitationCode, buildInvitationExpiry } from "@/lib/invitations";
 import type { LinkedParent } from "@/lib/types";
 
 interface LinkParentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  childId: string;
   childName: string;
   onAddParent: (parent: LinkedParent) => void;
 }
@@ -16,19 +19,10 @@ const ROLES = [
   { value: "guardian" as const, label: "Tutor/a" },
 ] as const;
 
-const CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-function generateCode(): string {
-  let code = "";
-  for (let i = 0; i < 5; i++) {
-    code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
-  }
-  return code;
-}
-
 export function LinkParentModal({
   isOpen,
   onClose,
+  childId,
   childName,
   onAddParent,
 }: LinkParentModalProps) {
@@ -37,6 +31,8 @@ export function LinkParentModal({
   const [role, setRole] = useState<"mother" | "father" | "guardian">("mother");
   const [submitted, setSubmitted] = useState(false);
   const [invitationCode, setInvitationCode] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
     parentName?: string;
     email?: string;
@@ -50,6 +46,8 @@ export function LinkParentModal({
     setRole("mother");
     setSubmitted(false);
     setInvitationCode("");
+    setSending(false);
+    setSendError(null);
     setErrors({});
   }
 
@@ -58,7 +56,7 @@ export function LinkParentModal({
     onClose();
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const newErrors: { parentName?: string; email?: string } = {};
 
@@ -75,9 +73,60 @@ export function LinkParentModal({
     }
 
     setErrors({});
-    const code = generateCode();
+    setSendError(null);
+    setSending(true);
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setSendError("Debés estar autenticado para enviar invitaciones.");
+      setSending(false);
+      return;
+    }
+
+    const code = generateInvitationCode();
+    const expiresAt = buildInvitationExpiry();
+
+    const { error: insertError } = await supabase.from("invitations").insert({
+      child_id: childId,
+      invited_by: user.id,
+      full_name: parentName.trim(),
+      email: email.trim(),
+      relationship: role,
+      code,
+      status: "pending",
+      expires_at: expiresAt,
+    });
+
+    if (insertError) {
+      setSendError("Error al guardar la invitación. Intentá de nuevo.");
+      setSending(false);
+      return;
+    }
+
+    const res = await fetch("/api/send-invitation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        invitationId: "pending",
+        email: email.trim(),
+        childName,
+        parentName: parentName.trim(),
+        code,
+      }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      setSendError(data.error || "Error al enviar el correo. Intentá de nuevo.");
+      setSending(false);
+      return;
+    }
+
     setInvitationCode(code);
     setSubmitted(true);
+    setSending(false);
 
     onAddParent({
       name: parentName.trim(),
@@ -157,6 +206,29 @@ export function LinkParentModal({
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Send error */}
+            {sendError && (
+              <div className="mb-4 flex gap-[11px] rounded-[14px] bg-red-50 px-4 py-[13px]">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#C5413A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mt-px flex-none"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4M12 16h.01" />
+                </svg>
+                <span className="text-[13.5px] leading-[1.45] text-[#C5413A]">
+                  {sendError}
+                </span>
+              </div>
+            )}
+
             {/* Parent name */}
             <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]">
               NOMBRE DEL PADRE/MADRE
@@ -239,23 +311,29 @@ export function LinkParentModal({
             {/* Submit button */}
             <button
               type="submit"
-              disabled={submitted}
+              disabled={submitted || sending}
               className="flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] py-[14px] text-[15.5px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m22 2-7 20-4-9-9-4z" />
-                <path d="M22 2 11 13" />
-              </svg>
-              Enviar invitación
+              {sending ? (
+                "Enviando..."
+              ) : (
+                <>
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m22 2-7 20-4-9-9-4z" />
+                    <path d="M22 2 11 13" />
+                  </svg>
+                  Enviar invitación
+                </>
+              )}
             </button>
           </form>
         </div>

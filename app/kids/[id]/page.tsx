@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import type { ChildWithRoom, LinkedParent } from "@/lib/types";
 import { getChildAvatar, getChildInitial, getChildAge, getChildBadge, formatDateBirth, formatDateEnrolled } from "@/lib/types";
@@ -255,6 +255,7 @@ export default function KidProfilePage({
       <LinkParentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        childId={child.id}
         childName={child.full_name}
         onAddParent={handleAddParent}
       />

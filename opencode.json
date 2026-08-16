@@ -10,6 +10,10 @@
     "react-review": {
       "description": "Revisa archivos React aplicando best practices (solo auditoría)",
       "template": "Carga y sigue la skill react-best-practices en .agents/skills/react-best-practices/SKILL.md.\n\nArchivos: $ARGUMENTS"
+    },
+    "a11y": {
+      "description": "Revisa accesibilidad WCAG 2.2 AA en componentes React/TSX",
+      "template": "Carga y sigue la skill accessibility-checker en .agents/skills/accessibility-checker/SKILL.md.\n\nArchivos: $ARGUMENTS"
     }
   },
   "references": {

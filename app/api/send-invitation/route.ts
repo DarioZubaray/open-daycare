@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL ?? "OpenDayCare <invitaciones@resend.dev>";
 
 interface InvitationEmailPayload {
   invitationId: string;
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: "OpenDayCare <invitaciones@resend.dev>",
+      from: fromEmail,
       to: [email],
       subject: `Invitación a OpenDayCare - Seguí el día de ${childName}`,
       html: buildInvitationEmail(childName, parentName, code),
